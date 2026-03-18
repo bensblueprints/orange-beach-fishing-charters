@@ -214,10 +214,44 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ========== TOP BAR ========== */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1001;
+      background: var(--navy);
+      padding: 0.4rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+      transition: transform 0.3s ease;
+    }
+    .top-bar.hidden { transform: translateY(-100%); }
+    .top-bar a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: 0.5px;
+    }
+    .top-bar a:hover { color: var(--gold-light); }
+    .top-bar span { color: var(--gray-400); }
+    .top-bar svg { width: 14px; height: 14px; stroke: var(--gold); fill: none; stroke-width: 2; }
+    @media (max-width: 768px) {
+      .top-bar { font-size: 0.7rem; gap: 0.75rem; padding: 0.35rem 1rem; }
+    }
+
     /* ========== NAV ========== */
     .nav {
       position: fixed;
-      top: 0;
+      top: 32px;
       left: 0;
       right: 0;
       z-index: 1000;
@@ -1643,6 +1677,13 @@
 </head>
 <body>
 
+  <!-- TOP BAR -->
+  <div class="top-bar" id="topBar">
+    <a href="tel:+12512651122"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> (251) 265-1122</a>
+    <span>&bull;</span>
+    <span style="color:var(--gray-300);">Book Your Charter Today &mdash; Call or Text Captain Marty!</span>
+  </div>
+
   <!-- NAV -->
   <nav class="nav" id="nav">
     <a href="#" class="nav-logo"><img src="images/logo.png" alt="Orange Beach Fishing Charters & Saltwater Guides" class="nav-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none">ORANGE BEACH <em style="color:var(--gold)">FISHING CHARTERS</em></span></a>
@@ -2642,10 +2683,14 @@
 
     renderGallery();
 
-    // Scroll-triggered nav
+    // Scroll-triggered nav + top bar hide
     const nav = document.getElementById('nav');
+    const topBar = document.getElementById('topBar');
     window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 50);
+      const scrolled = window.scrollY > 50;
+      nav.classList.toggle('scrolled', scrolled);
+      topBar.classList.toggle('hidden', scrolled);
+      nav.style.top = scrolled ? '0' : '32px';
     });
 
     // Mobile menu
