@@ -1056,6 +1056,9 @@
           <h2 id="cal-month-label" style="font-family:var(--font-display);font-size:1.8rem;color:var(--white);letter-spacing:2px;min-width:220px;text-align:center;"></h2>
           <button class="action-btn action-btn-edit" onclick="calNav(1)" style="padding:0.5rem 0.75rem;">&raquo;</button>
           <button class="action-btn action-btn-edit" onclick="calToday()" style="font-size:0.75rem;">Today</button>
+          <select id="cal-boat-filter" onchange="renderCalendar()" style="padding:0.5rem 1rem;background:var(--navy);border:1px solid var(--navy-lighter);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:0.85rem;outline:none;margin-left:1rem;">
+            <option value="all">All Boats</option>
+          </select>
         </div>
         <div style="display:flex;gap:0.75rem;">
           <button class="action-btn action-btn-confirm" onclick="openManualBooking()">+ Add Trip</button>
@@ -1093,6 +1096,10 @@
               <select id="m-guests" class="login-input" style="margin:0;"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
             </div>
           </div>
+          <div style="margin-bottom:1rem;">
+            <label style="display:block;font-size:0.75rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem;">Boat</label>
+            <select id="m-boat" style="width:100%;padding:0.7rem 1rem;background:var(--navy);border:1px solid var(--navy-lighter);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:0.85rem;outline:none;"></select>
+          </div>
           <div style="margin-top:1rem;"><label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Notes</label><input id="m-notes" class="login-input" style="margin:0;" placeholder="Optional notes..."></div>
           <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
             <button class="action-btn action-btn-confirm" onclick="saveManualBooking()" style="flex:1;justify-content:center;">Save Trip</button>
@@ -1109,6 +1116,10 @@
           <div style="margin-bottom:1rem;"><label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Start Date</label><input id="b-start" type="date" class="login-input" style="margin:0;"></div>
           <div style="margin-bottom:1rem;"><label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">End Date</label><input id="b-end" type="date" class="login-input" style="margin:0;"></div>
           <div style="margin-bottom:1rem;"><label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Reason (optional)</label><input id="b-reason" class="login-input" style="margin:0;" placeholder="e.g. Boat maintenance, Personal"></div>
+          <div style="margin-bottom:1rem;">
+            <label style="display:block;font-size:0.75rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem;">Boat</label>
+            <select id="b-boat" style="width:100%;padding:0.7rem 1rem;background:var(--navy);border:1px solid var(--navy-lighter);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:0.85rem;outline:none;"></select>
+          </div>
           <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
             <button class="action-btn" onclick="saveBlockDates()" style="flex:1;justify-content:center;background:var(--red);color:white;">Block Dates</button>
             <button class="action-btn action-btn-edit" onclick="closeModal('modal-block')">Cancel</button>
@@ -1172,6 +1183,20 @@
 
     <!-- ==================== SETTINGS TAB ==================== -->
     <div id="panel-settings" style="display:none;">
+      <div class="gcal-settings">
+        <h3>&#9973; FLEET MANAGEMENT</h3>
+        <p style="color:var(--gray-400);font-size:0.9rem;margin-bottom:1.25rem;">Manage your boats. Each boat gets its own color on the trip calendar and can be selected when adding trips or blocking dates.</p>
+
+        <div id="fleet-list" style="margin-bottom:1.5rem;"></div>
+
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="fleet-name" placeholder="Boat name" style="flex:1;min-width:150px;padding:0.7rem 1rem;background:var(--navy);border:1px solid var(--navy-lighter);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:0.85rem;outline:none;">
+          <input type="text" id="fleet-type" placeholder="Type (e.g. Inshore)" style="width:130px;padding:0.7rem 1rem;background:var(--navy);border:1px solid var(--navy-lighter);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:0.85rem;outline:none;">
+          <input type="color" id="fleet-color" value="#22c55e" style="width:40px;height:38px;border:1px solid var(--navy-lighter);border-radius:8px;background:var(--navy);cursor:pointer;">
+          <button class="action-btn action-btn-confirm" onclick="addBoat()">+ Add Boat</button>
+        </div>
+      </div>
+
       <div class="gcal-settings">
         <h3>GOOGLE CALENDAR INTEGRATION</h3>
         <p style="color:var(--gray-400);font-size:0.9rem;margin-bottom:1.25rem;">Connect your Google Calendar so confirmed bookings automatically sync as events. When you confirm a booking, it will be added to your calendar.</p>
@@ -1703,7 +1728,7 @@
     });
     if (tab === 'blog') initBlogTab();
     if (tab === 'traffic') fetchTraffic();
-    if (tab === 'settings') { loadGCalSettings(); loadPaymentSettings(); }
+    if (tab === 'settings') { loadGCalSettings(); loadPaymentSettings(); renderFleetList(); }
     if (tab === 'calendar') renderCalendar();
   }
 
@@ -2293,6 +2318,87 @@
   // Load blog list when tab opens
   function initBlogTab() { renderBlogList(); }
 
+  // ========== FLEET MANAGEMENT ==========
+  const DEFAULT_FLEET = [
+    { name: 'Top Dog', type: 'Inshore', color: '#22c55e' },
+    { name: 'Perfection', type: 'Nearshore', color: '#3b82f6' },
+    { name: 'Renegade', type: 'Offshore', color: '#f59e0b' },
+    { name: 'Our Way', type: 'Deep Sea', color: '#ef4444' }
+  ];
+
+  function getFleet() {
+    const saved = localStorage.getItem('ws_fleet');
+    if (saved) return JSON.parse(saved);
+    localStorage.setItem('ws_fleet', JSON.stringify(DEFAULT_FLEET));
+    return DEFAULT_FLEET;
+  }
+
+  function saveFleet(fleet) {
+    localStorage.setItem('ws_fleet', JSON.stringify(fleet));
+  }
+
+  function renderFleetList() {
+    const fleet = getFleet();
+    const container = document.getElementById('fleet-list');
+    if (!container) return;
+    container.innerHTML = fleet.map((boat, i) =>
+      '<div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 1rem;background:var(--navy);border:1px solid var(--navy-lighter);border-radius:8px;margin-bottom:0.5rem;">' +
+      '<span style="width:14px;height:14px;border-radius:4px;background:' + boat.color + ';flex-shrink:0;"></span>' +
+      '<span style="color:var(--white);font-weight:600;flex:1;">' + boat.name + '</span>' +
+      '<span style="color:var(--gray-500);font-size:0.8rem;">' + boat.type + '</span>' +
+      '<button onclick="removeBoat(' + i + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:0 0.25rem;" title="Remove">&times;</button>' +
+      '</div>'
+    ).join('');
+    populateBoatSelectors();
+  }
+
+  function addBoat() {
+    const name = document.getElementById('fleet-name').value.trim();
+    const type = document.getElementById('fleet-type').value.trim();
+    const color = document.getElementById('fleet-color').value;
+    if (!name) { alert('Enter a boat name.'); return; }
+    const fleet = getFleet();
+    fleet.push({ name: name, type: type || 'Charter', color: color });
+    saveFleet(fleet);
+    document.getElementById('fleet-name').value = '';
+    document.getElementById('fleet-type').value = '';
+    renderFleetList();
+  }
+
+  function removeBoat(index) {
+    const fleet = getFleet();
+    if (confirm('Remove ' + fleet[index].name + '?')) {
+      fleet.splice(index, 1);
+      saveFleet(fleet);
+      renderFleetList();
+    }
+  }
+
+  function populateBoatSelectors() {
+    const fleet = getFleet();
+    const options = fleet.map(b => '<option value="' + b.name + '">' + b.name + ' (' + b.type + ')</option>').join('');
+
+    // Calendar filter
+    const calFilter = document.getElementById('cal-boat-filter');
+    if (calFilter) {
+      const current = calFilter.value;
+      calFilter.innerHTML = '<option value="all">All Boats</option>' + options;
+      calFilter.value = current || 'all';
+    }
+
+    // Manual trip modal
+    const mBoat = document.getElementById('m-boat');
+    if (mBoat) mBoat.innerHTML = options;
+
+    // Block dates modal
+    const bBoat = document.getElementById('b-boat');
+    if (bBoat) bBoat.innerHTML = '<option value="all">All Boats</option>' + options;
+  }
+
+  // Initialize fleet management on load
+  renderFleetList();
+  populateBoatSelectors();
+
   // ========== TRIP CALENDAR ==========
   let calYear, calMonth;
   (function() {
@@ -2308,6 +2414,8 @@
   function getBlockedDates() { try { return JSON.parse(localStorage.getItem('ws_blocked_dates') || '[]'); } catch { return []; } }
 
   function renderCalendar() {
+    const boatFilter = document.getElementById('cal-boat-filter')?.value || 'all';
+    const fleet = getFleet();
     const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
     document.getElementById('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
 
@@ -2334,20 +2442,22 @@
       if (!date || date === '--') return;
       const status = statuses[b.id] || 'new';
       if (status === 'cancelled') return;
-      addEvent(date, { type: 'booking-' + (status === 'completed' ? 'completed' : status === 'confirmed' ? 'confirmed' : 'new'), label: b.name, detail: b.trip_type });
+      addEvent(date, { type: 'booking-' + (status === 'completed' ? 'completed' : status === 'confirmed' ? 'confirmed' : 'new'), label: b.name, detail: b.trip_type, boat: null });
     });
 
     // Manual trips
     getManualTrips().forEach(t => {
-      addEvent(t.date, { type: 'booking-manual', label: t.name, detail: t.trip });
+      if (boatFilter !== 'all' && t.boat && t.boat !== boatFilter) return;
+      addEvent(t.date, { type: 'booking-manual', label: t.name, detail: t.trip, boat: t.boat || null });
     });
 
     // Blocked dates
     getBlockedDates().forEach(b => {
+      if (boatFilter !== 'all' && b.boat && b.boat !== 'all' && b.boat !== boatFilter) return;
       const start = new Date(b.start + 'T12:00:00');
       const end = new Date(b.end + 'T12:00:00');
       for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        addEvent(d.toISOString().split('T')[0], { type: 'blocked', label: b.reason || 'Blocked', detail: '' });
+        addEvent(d.toISOString().split('T')[0], { type: 'blocked', label: b.reason || 'Blocked', detail: '', boat: b.boat || null });
       }
     });
 
@@ -2375,9 +2485,14 @@
 
       const isToday = dateStr === todayStr;
       const dayEvents = events[dateStr] || [];
-      const eventsHtml = dayEvents.slice(0, 3).map(e =>
-        '<div class="cal-event ' + e.type + '" title="' + escapeHtml(e.label + (e.detail ? ' - ' + e.detail : '')) + '">' + escapeHtml(e.label) + '</div>'
-      ).join('') + (dayEvents.length > 3 ? '<div style="font-size:0.6rem;color:var(--gray-500);">+' + (dayEvents.length - 3) + ' more</div>' : '');
+      const eventsHtml = dayEvents.slice(0, 3).map(e => {
+        const boatInfo = e.boat ? fleet.find(fb => fb.name === e.boat) : null;
+        const dotColor = boatInfo ? boatInfo.color : null;
+        const boatStyle = dotColor ? 'border-left-color:' + dotColor + ';' : '';
+        const boatDot = dotColor ? '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + dotColor + ';margin-right:3px;flex-shrink:0;"></span>' : '';
+        const boatLabel = e.boat ? ' [' + e.boat + ']' : '';
+        return '<div class="cal-event ' + e.type + '" style="' + boatStyle + 'display:flex;align-items:center;" title="' + escapeHtml(e.label + (e.detail ? ' - ' + e.detail : '') + boatLabel) + '">' + boatDot + escapeHtml(e.label) + '</div>';
+      }).join('') + (dayEvents.length > 3 ? '<div style="font-size:0.6rem;color:var(--gray-500);">+' + (dayEvents.length - 3) + ' more</div>' : '');
 
       html += '<div class="cal-day' + (isOther ? ' other-month' : '') + (isToday ? ' today' : '') + '" onclick="calDayClick(\'' + dateStr + '\')">' +
         '<div class="cal-day-num">' + day + '</div>' +
@@ -2412,7 +2527,7 @@
   function quickBlock(dateStr) {
     const reason = prompt('Reason (optional):') || '';
     const blocks = getBlockedDates();
-    blocks.push({ start: dateStr, end: dateStr, reason });
+    blocks.push({ start: dateStr, end: dateStr, reason, boat: 'all' });
     localStorage.setItem('ws_blocked_dates', JSON.stringify(blocks));
     renderCalendar();
   }
@@ -2436,6 +2551,7 @@
       email: document.getElementById('m-email').value.trim(),
       trip: document.getElementById('m-trip').value,
       guests: document.getElementById('m-guests').value,
+      boat: document.getElementById('m-boat').value,
       notes: document.getElementById('m-notes').value.trim(),
       id: 'manual-' + Date.now()
     };
@@ -2464,7 +2580,7 @@
     if (!start) { alert('Start date is required.'); return; }
 
     const blocks = getBlockedDates();
-    blocks.push({ start, end, reason: document.getElementById('b-reason').value.trim() });
+    blocks.push({ start, end, reason: document.getElementById('b-reason').value.trim(), boat: document.getElementById('b-boat').value });
     localStorage.setItem('ws_blocked_dates', JSON.stringify(blocks));
 
     closeModal('modal-block');
