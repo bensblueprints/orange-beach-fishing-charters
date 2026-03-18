@@ -233,6 +233,8 @@
       padding: 0.6rem 2rem;
       box-shadow: 0 4px 30px rgba(0,0,0,0.1);
     }
+    .nav.scrolled .nav-logo { color: var(--navy); text-shadow: none; }
+    .nav.scrolled .nav-logo span, .nav.scrolled .nav-logo em { color: var(--gold); }
     .nav.scrolled .nav-links a {
       color: var(--navy);
       text-shadow: none;
@@ -242,6 +244,7 @@
       background: var(--navy) !important;
       color: var(--white) !important;
     }
+    .nav.scrolled .mobile-toggle span { background: var(--navy); }
     .nav-logo {
       font-family: var(--font-display);
       font-size: 1.5rem;
@@ -1097,7 +1100,10 @@
         gap: 1rem;
       }
       .mobile-toggle { display: block; }
-      .hero-stats { gap: 1.5rem; }
+      .hero h1 { margin-bottom: 1rem; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem; padding-top: 1.5rem; }
+      .hero-stat-num { font-size: 1.5rem; }
+      .hero-stat-label { font-size: 0.65rem; letter-spacing: 0.5px; }
       .about-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
