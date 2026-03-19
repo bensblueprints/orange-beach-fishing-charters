@@ -210,7 +210,7 @@
       font-family: var(--font-body);
       color: var(--gray-800);
       background: var(--white);
-      line-height: 1.6;
+      line-height: 1.7;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -329,6 +329,8 @@
       border: none;
       cursor: pointer;
       padding: 0.75rem;
+      min-width: 44px;
+      min-height: 44px;
       z-index: 1002;
       position: relative;
     }
@@ -622,6 +624,7 @@
       position: relative;
       transition: all 0.3s ease;
       overflow: hidden;
+      will-change: transform;
     }
     .price-card::before {
       content: '';
@@ -636,7 +639,7 @@
     }
     .price-card:hover::before { opacity: 1; }
     .price-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       border-color: rgba(255,255,255,0.15);
     }
@@ -984,9 +987,10 @@
       text-align: center;
       border: 1px solid var(--gray-200);
       transition: all 0.3s;
+      will-change: transform;
     }
     .contact-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 15px 40px rgba(0,0,0,0.08);
     }
     .contact-icon {
@@ -1219,9 +1223,10 @@
       padding: 2rem 1.5rem;
       text-align: center;
       transition: all 0.3s;
+      will-change: transform;
     }
     .species-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 15px 40px rgba(0,0,0,0.08);
       border-color: var(--teal);
     }
@@ -1365,9 +1370,10 @@
       border-radius: 16px;
       padding: 2rem 1.5rem;
       transition: all 0.3s;
+      will-change: transform;
     }
     .season-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       border-color: rgba(255,255,255,0.15);
     }
@@ -1489,9 +1495,10 @@
       border-radius: 16px;
       padding: 2rem;
       transition: all 0.3s;
+      will-change: transform;
     }
     .fleet-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 15px 40px rgba(0,0,0,0.08);
       border-color: var(--teal);
     }
@@ -1530,9 +1537,10 @@
       border-radius: 16px;
       padding: 2rem 1.5rem;
       transition: all 0.3s;
+      will-change: transform;
     }
     .area-city:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 15px 40px rgba(0,0,0,0.08);
     }
     .area-city h4 {
@@ -1688,17 +1696,68 @@
       .species-text-block { columns: 1; }
       .area-text { columns: 1; }
       .fleet-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+      .mobile-cta-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 998;
+        background: var(--navy);
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+        border-top: 2px solid var(--gold);
+      }
+      .mobile-cta-bar.visible { transform: translateY(0); }
+      .mobile-cta-bar a {
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-decoration: none;
+        text-align: center;
+      }
+      .mobile-cta-bar .cta-book {
+        background: var(--gold);
+        color: var(--navy);
+        flex: 1;
+      }
+      .mobile-cta-bar .cta-call {
+        background: transparent;
+        color: var(--white);
+        border: 1.5px solid rgba(255,255,255,0.3);
+        white-space: nowrap;
+      }
     }
 
     /* ========== ANIMATIONS ========== */
     .fade-up {
       opacity: 0;
       transform: translateY(30px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .fade-up.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+    .gallery-item, .contact-card, .species-card, .season-card, .area-city, .price-card, .testimonial-card, .bring-card { cursor: pointer; }
+    .gallery-item { background: var(--gray-200); }
+    @keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .gallery-item:empty, .gallery-item img[src=""] {
+      background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+      background-size: 200% 100%;
+      animation: skeleton 1.5s ease infinite;
+    }
+    .species-text-block p, .area-text p, .faq-a-inner { max-width: 65ch; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg { animation: none !important; }
+      .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
@@ -2238,11 +2297,11 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required placeholder="john@example.com">
+                <input type="email" id="email" name="email" required placeholder="john@example.com" inputmode="email">
               </div>
               <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567" inputmode="tel">
               </div>
             </div>
 
@@ -2666,6 +2725,11 @@
     <img id="lightboxImg" src="" alt="Gallery photo">
   </div>
 
+  <div class="mobile-cta-bar" id="mobileCta">
+    <a href="#booking" class="cta-book">Book Now &rarr;</a>
+    <a href="tel:+12512651122" class="cta-call">&#9742; Call</a>
+  </div>
+
   <script>
     // Gallery - load ALL local photos
     const allPhotos = [
@@ -2688,7 +2752,7 @@
       const photos = showAll ? allPhotos : allPhotos.slice(0, INITIAL_COUNT);
       grid.innerHTML = photos.map((src, i) =>
         '<div class="gallery-item" onclick="openLightbox(this)">' +
-        '<img src="' + src + '" alt="Orange Beach fishing charter trip - Gulf of Mexico catch photo" loading="lazy">' +
+        '<img src="' + src + '" alt="Orange Beach fishing charter trip - Gulf of Mexico catch photo" loading="lazy" decoding="async">' +
         '</div>'
       ).join('');
       const btn = document.getElementById('galleryBtn');
@@ -2718,6 +2782,8 @@
       nav.classList.toggle('scrolled', scrolled);
       topBar.classList.toggle('hidden', scrolled);
       nav.style.top = scrolled ? '0' : '32px';
+      var mobileCta = document.getElementById('mobileCta');
+      if (mobileCta) mobileCta.classList.toggle('visible', window.scrollY > 600);
     });
 
     // Mobile menu
@@ -2787,6 +2853,36 @@
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Counter animation for hero stats
+    function animateCounters() {
+      document.querySelectorAll('.hero-stat-num').forEach(function(el) {
+        var text = el.textContent.trim();
+        var match = text.match(/^([\d.]+)/);
+        if (!match) return;
+        var target = parseFloat(match[1]);
+        var suffix = text.replace(match[1], '');
+        var duration = 1500;
+        var start = performance.now();
+        var isFloat = text.includes('.');
+        function update(now) {
+          var elapsed = now - start;
+          var progress = Math.min(elapsed / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = eased * target;
+          el.textContent = (isFloat ? current.toFixed(1) : Math.round(current)) + suffix;
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+    }
+    var heroStats = document.querySelector('.hero-stats');
+    if (heroStats) {
+      var statsObserver = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) { animateCounters(); statsObserver.disconnect(); }
+      }, { threshold: 0.5 });
+      statsObserver.observe(heroStats);
+    }
 
     // ========== GOOGLE ANALYTICS ==========
     (function(){
