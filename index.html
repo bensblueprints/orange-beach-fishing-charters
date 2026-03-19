@@ -278,7 +278,7 @@
       background: var(--navy) !important;
       color: var(--white) !important;
     }
-    .nav.scrolled .mobile-toggle span { background: var(--navy); }
+    .nav.scrolled .mobile-toggle span { background: var(--navy) !important; }
     .nav-logo {
       font-family: var(--font-display);
       font-size: 1.5rem;
@@ -328,15 +328,18 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0.5rem;
+      padding: 0.75rem;
+      z-index: 1002;
+      position: relative;
     }
     .mobile-toggle span {
       display: block;
-      width: 24px;
-      height: 2px;
+      width: 26px;
+      height: 3px;
       background: var(--white);
       margin: 5px 0;
       transition: 0.3s;
+      border-radius: 2px;
     }
 
     /* ========== HERO ========== */
@@ -1121,9 +1124,10 @@
       .about-grid { gap: 2rem; }
     }
     @media (max-width: 768px) {
-      .nav-links { display: none; }
+      .nav-links { display: none !important; visibility: hidden; }
       .nav-links.open {
-        display: flex;
+        display: flex !important;
+        visibility: visible;
         flex-direction: column;
         position: fixed;
         top: 0;
@@ -1134,11 +1138,12 @@
         backdrop-filter: blur(12px);
         padding: 5rem 2rem 2rem;
         gap: 1.25rem;
-        z-index: 999;
+        z-index: 1000;
         align-items: center;
         justify-content: flex-start;
         overflow-y: auto;
       }
+      .nav-links.open li { display: block; }
       .nav-links.open a {
         color: var(--white) !important;
         text-shadow: none !important;
@@ -1151,7 +1156,7 @@
         padding: 0.75rem 2rem !important;
         margin-top: 0.5rem;
       }
-      .mobile-toggle { display: block; z-index: 1001; }
+      .mobile-toggle { display: block !important; z-index: 1002; }
       .nav { padding: 0.5rem 1rem; }
       .nav.scrolled { padding: 0.4rem 1rem; }
       .nav-logo-img { height: 50px; }
