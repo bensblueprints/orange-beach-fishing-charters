@@ -991,6 +991,14 @@
             <button class="action-btn action-btn-edit" onclick="closeBlogEditor()" style="padding:0.4rem 0.75rem;">&#10005;</button>
           </div>
 
+          <div style="margin-bottom:1rem;">
+            <label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Category</label>
+            <select id="be-category" class="login-input" style="margin:0;">
+              <option value="fishing-report">Fishing Report</option>
+              <option value="blog">Blog Post</option>
+            </select>
+          </div>
+
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
             <div style="grid-column:span 2;"><label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Post Title</label><input id="be-title" class="login-input" style="margin:0;" placeholder="e.g. Best Times to Fish the Chesapeake Bay"></div>
             <div><label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">URL Slug</label><input id="be-slug" class="login-input" style="margin:0;" placeholder="auto-generated-from-title"></div>
@@ -1023,6 +1031,15 @@
               </label>
             </div>
             <div id="be-image-preview" style="margin-top:0.5rem;"></div>
+          </div>
+
+          <div style="margin-bottom:1rem;">
+            <label style="display:block;font-size:0.7rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Gallery Images (multiple)</label>
+            <label class="action-btn action-btn-calendar" style="cursor:pointer;margin:0;display:inline-flex;">
+              <input type="file" id="be-gallery" accept="image/*" multiple style="display:none" onchange="handleGalleryUpload(this)">
+              &#128247; Add Photos
+            </label>
+            <div id="be-gallery-preview" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem;"></div>
           </div>
 
           <!-- Toolbar -->
@@ -2198,6 +2215,33 @@
     }).join('');
   }
 
+  let galleryImages = [];
+
+  function renderGalleryPreview() {
+    document.getElementById('be-gallery-preview').innerHTML = galleryImages.map(function(img, i) {
+      return '<div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--navy-lighter);">' +
+        '<img src="' + img + '" style="width:100%;height:100%;object-fit:cover;">' +
+        '<button onclick="removeGalleryImg(' + i + ')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.7);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;line-height:1;">&times;</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  function handleGalleryUpload(input) {
+    for (const file of input.files) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        galleryImages.push(e.target.result);
+        renderGalleryPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function removeGalleryImg(idx) {
+    galleryImages.splice(idx, 1);
+    renderGalleryPreview();
+  }
+
   function openBlogEditor(post) {
     editingBlogId = null;
     document.getElementById('blog-editor-title').textContent = 'NEW BLOG POST';
@@ -2208,6 +2252,9 @@
     document.getElementById('be-content').value = '';
     document.getElementById('be-image').value = 'images/site_009.jpg';
     document.getElementById('be-image-preview').innerHTML = '';
+    document.getElementById('be-category').value = 'fishing-report';
+    galleryImages = [];
+    document.getElementById('be-gallery-preview').innerHTML = '';
     document.getElementById('modal-blog').style.display = 'flex';
   }
 
@@ -2226,6 +2273,9 @@
     document.getElementById('be-content').value = post.content || '';
     document.getElementById('be-image').value = post.heroImage || 'images/site_009.jpg';
     document.getElementById('be-image-preview').innerHTML = '';
+    document.getElementById('be-category').value = post.category || 'fishing-report';
+    galleryImages = post.gallery || [];
+    renderGalleryPreview();
     document.getElementById('modal-blog').style.display = 'flex';
   }
 
@@ -2249,7 +2299,9 @@
       date: document.getElementById('be-date').value || new Date().toISOString().split('T')[0],
       metaDescription: document.getElementById('be-meta').value.trim(),
       heroImage: document.getElementById('be-image').value,
-      content: document.getElementById('be-content').value
+      content: document.getElementById('be-content').value,
+      category: document.getElementById('be-category').value,
+      gallery: galleryImages
     };
 
     // Check for uploaded custom image

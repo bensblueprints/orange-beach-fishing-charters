@@ -1781,6 +1781,7 @@
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="blog.html">Blog</a></li>
       <li><a href="#booking" class="nav-cta">Book Now</a></li>
     </ul>
     <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
@@ -2639,6 +2640,19 @@
     </div>
   </section>
 
+  <!-- LATEST REPORTS -->
+  <section style="background:var(--gray-50);padding:4rem 2rem;">
+    <div class="container">
+      <div class="section-label fade-up">From the Water</div>
+      <div class="section-title fade-up">LATEST FISHING REPORTS</div>
+      <p class="section-desc fade-up">See what we've been catching lately.</p>
+      <div id="latestReports" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;margin-top:2rem;"></div>
+      <div style="text-align:center;margin-top:2rem;">
+        <a href="blog.html" class="btn btn-primary" style="background:var(--navy);color:var(--white);">View All Reports &rarr;</a>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA BANNER -->
   <div class="cta-banner">
     <h2 class="fade-up">READY TO FISH THE<br>GULF OF MEXICO?</h2>
@@ -2696,6 +2710,7 @@
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#area">Service Area</a></li>
+        <li><a href="blog.html">Blog</a></li>
         <li><a href="#booking">Book Now</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="admin.html">Admin</a></li>
@@ -2876,6 +2891,28 @@
       }, { threshold: 0.5 });
       statsObserver.observe(heroStats);
     }
+
+    // ========== LATEST REPORTS ==========
+    (function() {
+      var reports = JSON.parse(localStorage.getItem('ws_blog_posts') || '[]');
+      reports.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+      var latest = reports.slice(0, 3);
+      var container = document.getElementById('latestReports');
+      if (!container || latest.length === 0) {
+        if (container) container.innerHTML = '<p style="color:var(--gray-400);text-align:center;grid-column:1/-1;">No reports yet. Check back after your captain posts the latest catches!</p>';
+        return;
+      }
+      container.innerHTML = latest.map(function(post) {
+        var date = new Date(post.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        var excerpt = (post.metaDescription || post.content.replace(/<[^>]+>/g, '').substring(0, 120) + '...');
+        var cat = post.category === 'fishing-report' ? 'FISHING REPORT' : 'BLOG';
+        return '<a href="blog.html#' + post.slug + '" style="background:var(--white);border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;transition:all 0.3s;text-decoration:none;color:inherit;display:block;cursor:pointer;" onmouseover="this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 15px 40px rgba(0,0,0,0.1)\'" onmouseout="this.style.transform=\'none\';this.style.boxShadow=\'none\'">' +
+        (post.heroImage ? '<img src="' + post.heroImage + '" style="width:100%;height:200px;object-fit:cover;" loading="lazy">' : '') +
+        '<div style="padding:1.25rem;"><div style="font-size:0.7rem;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">' + cat + ' &bull; ' + date + '</div>' +
+        '<div style="font-family:var(--font-display);font-size:1.3rem;color:var(--navy);letter-spacing:1px;line-height:1.1;margin-bottom:0.5rem;">' + post.title + '</div>' +
+        '<p style="color:var(--gray-500);font-size:0.85rem;line-height:1.5;">' + excerpt + '</p></div></a>';
+      }).join('');
+    })();
 
     // ========== GOOGLE ANALYTICS ==========
     (function(){
