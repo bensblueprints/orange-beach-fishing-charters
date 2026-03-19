@@ -2172,9 +2172,28 @@
           <a href="#booking" class="btn btn-outline" style="border-color: rgba(255,255,255,0.2); color: white;">Book Inshore</a>
         </div>
 
-        <!-- Offshore -->
+        <!-- Nearshore -->
         <div class="price-card featured fade-up">
           <div class="price-popular">Most Popular</div>
+          <h3>NEARSHORE EXPEDITION</h3>
+          <div class="price-duration">6 Hours &bull; 45' Renegade or 44' Our Way</div>
+          <div class="price-amount">
+            <span class="price-dollar">$1,400</span>
+          </div>
+          <div class="price-per">flat rate &mdash; up to 6 guests</div>
+          <div class="price-note">Snapper, amberjack, cobia &amp; more!</div>
+          <ul class="price-features">
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>All equipment included</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Live bait provided (caught fresh)</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>No fishing license required</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Fish cleaning included</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Bigger fish &amp; smooth ride</li>
+          </ul>
+          <a href="#booking" class="btn btn-primary">Book Nearshore &rarr;</a>
+        </div>
+
+        <!-- Offshore -->
+        <div class="price-card fade-up">
           <h3>OFFSHORE / DEEP SEA</h3>
           <div class="price-duration">8&ndash;12 Hours &bull; 45' Renegade or 44' Our Way</div>
           <div class="price-amount">
@@ -2285,6 +2304,7 @@
                 <select id="tripType" name="tripType" required onchange="updatePrice()">
                   <option value="">Select trip...</option>
                   <option value="inshore">Inshore Adventure &mdash; 4 Hours ($500)</option>
+                  <option value="nearshore" selected>Nearshore Expedition &mdash; 6 Hours ($1,400)</option>
                   <option value="offshore">Offshore / Deep Sea &mdash; 8-12 Hours ($2,000+)</option>
                 </select>
               </div>
@@ -2770,7 +2790,7 @@
     });
 
     // Price calculator - FLAT RATE, no per-person add-on
-    const prices = { 'inshore': 500, 'offshore': 2000 };
+    const prices = { 'inshore': 500, 'nearshore': 1400, 'offshore': 2000 };
     function updatePrice() {
       const trip = document.getElementById('tripType').value;
       const total = prices[trip] || 1400;
